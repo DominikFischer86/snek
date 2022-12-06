@@ -1,38 +1,101 @@
 import { useState, useEffect } from "react"
 
+import Snake from "./components/Snake"
+
 import "./App.css"
 
 const ARENA_SIZE_X = 500
 const ARENA_SIZE_Y = 500
-const SNAKE_SIZE = 20
-const RATIO_X = ARENA_SIZE_X / SNAKE_SIZE
-const RATIO_Y = ARENA_SIZE_Y / SNAKE_SIZE
+const SNAKE_PART_SIZE = 20
+const RATIO_X = ARENA_SIZE_X / SNAKE_PART_SIZE
+const RATIO_Y = ARENA_SIZE_Y / SNAKE_PART_SIZE
 
 const FOOD_TYPES = ["egg", "chicken"]
+const BASE_SNAKE = ["head", "body_1", "tail"]
+
+const INITIAL_SNAKEPOSITIONS = {
+	"level-1": {
+		[BASE_SNAKE[0]]: { x: SNAKE_PART_SIZE * BASE_SNAKE.length, y: 0 },
+		[BASE_SNAKE[1]]: {
+			x: SNAKE_PART_SIZE * BASE_SNAKE.length - SNAKE_PART_SIZE,
+			y: 0
+		},
+		[BASE_SNAKE[2]]: {
+			x: SNAKE_PART_SIZE * BASE_SNAKE.length - SNAKE_PART_SIZE * 2,
+			y: 0
+		}
+	}
+}
 
 const registerMovement = (handleEvent: any) =>
 	document.addEventListener("keydown", handleEvent)
 
+const SNAKE_POSITION_HISTORY: any[] = []
+
 const App = () => {
-	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_SIZE
-	const setFoodY = Math.floor(Math.random() * RATIO_Y) * SNAKE_SIZE
+	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_PART_SIZE
+	const setFoodY = Math.floor(Math.random() * RATIO_Y) * SNAKE_PART_SIZE
 
 	const [score, setScore] = useState(0)
-	const [snakePosition, setSnakePosition] = useState({ x: 0, y: 0 })
+	const [level, setLevel] = useState(1)
+	const [snakePositions, setSnakePositions] = useState(INITIAL_SNAKEPOSITIONS)
+	const [tickCounter, setTickCounter] = useState(0)
+	const [snake, setSnake] = useState(BASE_SNAKE)
 	const [foodPosition, setFoodPosition] = useState({
 		x: setFoodX,
 		y: setFoodY
 	})
-	const [snakeDirection, setSnakeDirection] = useState("right")
+	const [snakeHeadDirection, setSnakeHeadDirection] = useState("right")
+	// const [lastSnakeHeadDirection, setLastSnakeHeadDirection] = useState("")
 	const [gameOver, setGameOver] = useState(false)
 
 	useEffect(() => {
 		registerMovement(handleMovement)
 	}, [])
 
+	useEffect(() => {
+		SNAKE_POSITION_HISTORY.push(snakePositions)
+		if (SNAKE_POSITION_HISTORY.length > snake.length)
+			SNAKE_POSITION_HISTORY.splice(-snake.length + 1)
+	}, [snakePositions])
+
+	console.log(SNAKE_POSITION_HISTORY)
+
+	const snakePositionSetter = (
+		previousState: any,
+		axis: string,
+		snakePart: string,
+		direction: number
+	) => {
+		const lvl = `level-${level}`
+
+		return {
+			...previousState,
+			...{
+				[lvl]: {
+					...previousState[lvl],
+					...{
+						[snakePart]: {
+							x:
+								axis === "x"
+									? previousState[lvl][snakePart]?.x +
+									  SNAKE_PART_SIZE * direction
+									: previousState[lvl][snakePart]?.x,
+							y:
+								axis === "y"
+									? previousState[lvl][snakePart]?.y +
+									  SNAKE_PART_SIZE * direction
+									: previousState[lvl][snakePart]?.y
+						}
+					}
+				}
+			}
+		}
+	}
+
 	const gameIsOver = () => {
 		setGameOver(true)
-		setSnakePosition({ x: 0, y: 0 })
+		setSnakePositions(INITIAL_SNAKEPOSITIONS)
 	}
 
 	const foodIsEaten = () => {
@@ -44,35 +107,58 @@ const App = () => {
 		return
 	}
 
-	if (snakePosition.x === foodPosition.x && snakePosition.y === foodPosition.y)
-		foodIsEaten()
+	// if (
+	// 	snakePositions.x === foodPosition.x &&
+	// 	snakePositions.y === foodPosition.y
+	// )
+	// 	foodIsEaten()
 
-	if (
-		snakePosition.x < 0 ||
-		snakePosition.y < 0 ||
-		snakePosition.x >= ARENA_SIZE_X ||
-		snakePosition.y >= ARENA_SIZE_Y
-	)
-		gameIsOver()
+	// if (
+	// 	snakePositions.x < 0 ||
+	// 	snakePositions.y < 0 ||
+	// 	snakePositions.x >= ARENA_SIZE_X ||
+	// 	snakePositions.y >= ARENA_SIZE_Y
+	// )
+	// 	gameIsOver()
 
 	const handleMovement = (event: any) => {
 		const { key } = event
 
 		if (key === "ArrowRight") {
-			setSnakeDirection("right")
-			return setSnakePosition(prev => ({ ...prev, x: prev.x + SNAKE_SIZE }))
+			setSnakeHeadDirection("right")
+			snake.forEach((snakePart: string) =>
+				setSnakePositions((previousState: any) =>
+					snakePositionSetter(previousState, "x", snakePart, 1)
+				)
+			)
+			setTickCounter(tick => tick + 1)
 		}
 		if (key === "ArrowLeft") {
-			setSnakeDirection("left")
-			return setSnakePosition(prev => ({ ...prev, x: prev.x - SNAKE_SIZE }))
+			setSnakeHeadDirection("left")
+			snake.forEach((snakePart: string) =>
+				setSnakePositions((previousState: any) =>
+					snakePositionSetter(previousState, "x", snakePart, -1)
+				)
+			)
+			setTickCounter(tick => tick + 1)
 		}
 		if (key === "ArrowDown") {
-			setSnakeDirection("down")
-			return setSnakePosition(prev => ({ ...prev, y: prev.y + SNAKE_SIZE }))
+			setSnakeHeadDirection("down")
+			snake.forEach((snakePart: string) =>
+				setSnakePositions((previousState: any) =>
+					snakePositionSetter(previousState, "y", snakePart, 1)
+				)
+			)
+			setTickCounter(tick => tick + 1)
 		}
 		if (key === "ArrowUp") {
-			setSnakeDirection("up")
-			return setSnakePosition(prev => ({ ...prev, y: prev.y - SNAKE_SIZE }))
+			setSnakeHeadDirection("up")
+			snake.forEach((snakePart: string) =>
+				setSnakePositions((previousState: any) =>
+					snakePositionSetter(previousState, "y", snakePart, -1)
+				)
+			)
+			setTickCounter(tick => tick + 1)
 		}
 	}
 
@@ -84,22 +170,26 @@ const App = () => {
 					className="arena"
 					style={{ width: `${ARENA_SIZE_X}px`, height: `${ARENA_SIZE_Y}px` }}
 				>
-					<div
-						className={`snek ${snakeDirection}`}
-						style={{
-							top: snakePosition.y,
-							left: snakePosition.x,
-							width: `${SNAKE_SIZE}px`,
-							height: `${SNAKE_SIZE}px`
-						}}
-					></div>
+					{snake.map((snakePart: string, index: number) => {
+						return (
+							<Snake
+								snakeHeadDirection={snakeHeadDirection}
+								snakePositions={snakePositions}
+								snakeSize={SNAKE_PART_SIZE}
+								snakePart={snakePart}
+								level={`level-${level}`}
+								key={snakePart}
+							/>
+						)
+					})}
+
 					<div
 						className="food egg"
 						style={{
 							top: foodPosition.y,
 							left: foodPosition.x,
-							width: `${SNAKE_SIZE}px`,
-							height: `${SNAKE_SIZE}px`
+							width: `${SNAKE_PART_SIZE}px`,
+							height: `${SNAKE_PART_SIZE}px`
 						}}
 					></div>
 				</div>
