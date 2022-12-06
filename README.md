@@ -1,2 +1,3 @@
 # re-snek
- Small Snake Game in Typescript React
+
+Small Snake Game in Typescript React
