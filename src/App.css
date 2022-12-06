@@ -21,7 +21,10 @@
 	width: 10px;
 	height: 10px;
 	background: green;
-	position: relative;
+	position: absolute;
+}
+
+.snek.head {
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
 }
@@ -38,7 +41,7 @@
 	transform: rotate(90deg);
 }
 
-.snek:after {
+.snek.head:after {
 	content: "Y";
 	display: block;
 	transform: rotate(90deg);
