@@ -1,26 +1,43 @@
 type SnakePropTypes = {
-	snakeHeadDirection: string
-	snakePositions: any
-	snakeSize: number
+	snakeHeadPosition: { x: number; y: number; dir: string }
+	snakeBodyPartPosition: { x: number; y: number; dir: string }[]
+	snakePartSize: number
 	snakePart: string
-	level: string
+	index: number
 }
 
 const Snake = ({
-	snakeHeadDirection,
-	snakePositions,
-	snakeSize,
+	snakeHeadPosition,
+	snakeBodyPartPosition,
+	snakePartSize,
 	snakePart,
-	level
+	index
 }: SnakePropTypes) => {
+	const bodyPartOrientation =
+		snakePart === "head"
+			? snakeHeadPosition.dir
+			: snakeBodyPartPosition[index - 1]?.dir
+
+	const noWiggle =
+		snakeBodyPartPosition[snakeBodyPartPosition.length - 1]?.dir !==
+		snakeBodyPartPosition[snakeBodyPartPosition.length - 2]?.dir
+
 	return (
 		<div
-			className={`snek ${snakeHeadDirection} ${snakePart}`}
+			className={`snek ${bodyPartOrientation} ${snakePart} ${
+				noWiggle ? "stopWiggle" : ""
+			}`}
 			style={{
-				top: snakePositions[level][snakePart]?.y,
-				left: snakePositions[level][snakePart]?.x,
-				width: `${snakeSize}px`,
-				height: `${snakeSize}px`
+				top:
+					snakePart === "head"
+						? snakeHeadPosition.y
+						: snakeBodyPartPosition[index - 1]?.y,
+				left:
+					snakePart === "head"
+						? snakeHeadPosition.x
+						: snakeBodyPartPosition[index - 1]?.x,
+				width: `${snakePartSize}px`,
+				height: `${snakePartSize}px`
 			}}
 		></div>
 	)
