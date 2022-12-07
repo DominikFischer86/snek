@@ -20,13 +20,19 @@ const INITIAL_SNAKEPOSITION = {
 }
 const SNAKE_POSITION_HISTORY: any[] = []
 
-const registerMovement = (handleEvent: any, gameOver: boolean) =>{
-	gameOver ? document.removeEventListener("keydown", handleEvent) : document.addEventListener("keydown", handleEvent)}
-
-const App = () => {
+const getFoodLocation = () => {
 	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_PART_SIZE
 	const setFoodY = Math.floor(Math.random() * RATIO_Y) * SNAKE_PART_SIZE
+	return { x: setFoodX, y: setFoodY }
+}
 
+const registerMovement = (handleEvent: any, gameOver: boolean) => {
+	gameOver
+		? document.removeEventListener("keydown", handleEvent)
+		: document.addEventListener("keydown", handleEvent)
+}
+
+const App = () => {
 	const [score, setScore] = useState(0)
 	const [level, setLevel] = useState(0)
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(
@@ -35,8 +41,8 @@ const App = () => {
 	const [tickCounter, setTickCounter] = useState(0)
 	const [snake, setSnake] = useState(BASE_SNAKE)
 	const [foodPosition, setFoodPosition] = useState({
-		x: setFoodX,
-		y: setFoodY
+		x: getFoodLocation().x,
+		y: getFoodLocation().y
 	})
 
 	const [gameOver, setGameOver] = useState(false)
@@ -83,11 +89,22 @@ const App = () => {
 			const newSnake = oldSnake.slice(1)
 			return ["head", `body-${level}`, ...newSnake]
 		})
+
+		const newFoodPositionX = getFoodLocation().x
+		const newFoodPositionY = getFoodLocation().y
+
+		if (
+			SNAKE_POSITION_HISTORY.find(
+				position =>
+					position.x === newFoodPositionX && position.y === newFoodPositionY
+			)
+		)
+			return
+
 		setFoodPosition({
-			x: setFoodX,
-			y: setFoodY
+			x: newFoodPositionX,
+			y: newFoodPositionY
 		})
-		return
 	}
 
 	if (
