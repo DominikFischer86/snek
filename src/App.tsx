@@ -10,10 +10,8 @@ const SNAKE_PART_SIZE = 20
 const RATIO_X = ARENA_SIZE_X / SNAKE_PART_SIZE
 const RATIO_Y = ARENA_SIZE_Y / SNAKE_PART_SIZE
 
-const devToolsActivated = true
-
 const FOOD_TYPES = ["egg", "chicken"]
-const BASE_SNAKE = ["head", "body_1", "tail"]
+const BASE_SNAKE = ["head", "body_0", "tail"]
 
 const INITIAL_SNAKEPOSITION = {
 	x: 0,
@@ -30,7 +28,7 @@ const App = () => {
 	const setFoodY = Math.floor(Math.random() * RATIO_Y) * SNAKE_PART_SIZE
 
 	const [score, setScore] = useState(0)
-	const [level, setLevel] = useState(1)
+	const [level, setLevel] = useState(0)
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(
 		INITIAL_SNAKEPOSITION
 	)
@@ -80,6 +78,11 @@ const App = () => {
 
 	const foodIsEaten = () => {
 		setScore(score => score + 1)
+		setLevel(level => level + 1)
+		setSnake(oldSnake => {
+			const newSnake = oldSnake.slice(1)
+			return ["head", `body-${level}`, ...newSnake]
+		})
 		setFoodPosition({
 			x: setFoodX,
 			y: setFoodY
@@ -163,25 +166,6 @@ const App = () => {
 							}}
 						></div>
 					</div>
-					{devToolsActivated && (
-						<div className="devTools">
-							<p>
-								Snake Head Location: {snakeHeadPosition.x}x |{" "}
-								{snakeHeadPosition.y}y
-							</p>
-							<p>{"History (newest <-> oldest)"}</p>
-							<div>
-								{SNAKE_POSITION_HISTORY.map((positionData, index) => (
-									<div className="historyBox" key={index}>
-										<p>
-											Bodypart: {positionData.x}x | {positionData.y}y
-										</p>
-										<p>Orientation: {positionData.dir}</p>
-									</div>
-								))}
-							</div>
-						</div>
-					)}
 				</>
 			)}
 			{gameOver && (

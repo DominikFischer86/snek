@@ -65,6 +65,10 @@
 	}
 }
 
+.snek.undefined {
+	display: none;
+}
+
 .snek.left {
 	transform: scaleX(-1);
 }
