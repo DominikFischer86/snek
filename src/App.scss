@@ -5,12 +5,38 @@
 	text-align: center;
 }
 
+.App {
+	width: 800px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* Animations */
+
+@keyframes wiggle {
+	0% {
+		border-top-left-radius: 20px;
+		border-bottom-left-radius: 5px;
+	}
+	100% {
+		border-top-left-radius: 5px;
+		border-bottom-left-radius: 20px;
+	}
+}
+
 /* Assets */
 
 .arena {
-	border: 5px double #000;
+	outline: 5px double #000;
 	background: rgba(217, 255, 192, 0.658);
 	position: relative;
+}
+
+.arena.devMode {
+	background: repeating-conic-gradient(#eee 0% 25%, transparent 0% 50%) 50% /
+		40px 40px;
+	background-position: 0 0;
 }
 
 .score {
@@ -27,6 +53,16 @@
 .snek.head {
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
+}
+
+.snek.tail {
+	border-radius: none;
+	&:not(.stopWiggle) {
+		animation-duration: 0.1s;
+		animation-iteration-count: infinite;
+		animation-direction: alternate;
+		animation-name: wiggle;
+	}
 }
 
 .snek.left {
@@ -79,4 +115,27 @@
 	font-weight: bold;
 	font-size: 30px;
 	text-transform: uppercase;
+}
+
+.devTools {
+	width: 100%;
+}
+
+.devTools > div {
+	display: flex;
+}
+
+.historyBox {
+	display: flex;
+	border: 1px solid #aaa;
+	flex-direction: column;
+	flex: 0 1 50%;
+	padding: 1rem;
+}
+
+.historyBox ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	text-align: left;
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 
 import Snake from "./components/Snake"
 
-import "./App.css"
+import "./App.scss"
 
 const ARENA_SIZE_X = 500
 const ARENA_SIZE_Y = 500
@@ -10,27 +10,20 @@ const SNAKE_PART_SIZE = 20
 const RATIO_X = ARENA_SIZE_X / SNAKE_PART_SIZE
 const RATIO_Y = ARENA_SIZE_Y / SNAKE_PART_SIZE
 
+const devToolsActivated = true
+
 const FOOD_TYPES = ["egg", "chicken"]
 const BASE_SNAKE = ["head", "body_1", "tail"]
 
-const INITIAL_SNAKEPOSITIONS = {
-	"level-1": {
-		[BASE_SNAKE[0]]: { x: SNAKE_PART_SIZE * BASE_SNAKE.length, y: 0 },
-		[BASE_SNAKE[1]]: {
-			x: SNAKE_PART_SIZE * BASE_SNAKE.length - SNAKE_PART_SIZE,
-			y: 0
-		},
-		[BASE_SNAKE[2]]: {
-			x: SNAKE_PART_SIZE * BASE_SNAKE.length - SNAKE_PART_SIZE * 2,
-			y: 0
-		}
-	}
+const INITIAL_SNAKEPOSITION = {
+	x: 0,
+	y: 0,
+	dir: "right"
 }
+const SNAKE_POSITION_HISTORY: any[] = []
 
 const registerMovement = (handleEvent: any) =>
 	document.addEventListener("keydown", handleEvent)
-
-const SNAKE_POSITION_HISTORY: any[] = []
 
 const App = () => {
 	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_PART_SIZE
@@ -38,15 +31,16 @@ const App = () => {
 
 	const [score, setScore] = useState(0)
 	const [level, setLevel] = useState(1)
-	const [snakePositions, setSnakePositions] = useState(INITIAL_SNAKEPOSITIONS)
+	const [snakeHeadPosition, setSnakeHeadPosition] = useState(
+		INITIAL_SNAKEPOSITION
+	)
 	const [tickCounter, setTickCounter] = useState(0)
 	const [snake, setSnake] = useState(BASE_SNAKE)
 	const [foodPosition, setFoodPosition] = useState({
 		x: setFoodX,
 		y: setFoodY
 	})
-	const [snakeHeadDirection, setSnakeHeadDirection] = useState("right")
-	// const [lastSnakeHeadDirection, setLastSnakeHeadDirection] = useState("")
+
 	const [gameOver, setGameOver] = useState(false)
 
 	useEffect(() => {
@@ -54,48 +48,34 @@ const App = () => {
 	}, [])
 
 	useEffect(() => {
-		SNAKE_POSITION_HISTORY.push(snakePositions)
-		if (SNAKE_POSITION_HISTORY.length > snake.length)
-			SNAKE_POSITION_HISTORY.splice(-snake.length + 1)
-	}, [snakePositions])
+		SNAKE_POSITION_HISTORY.unshift(snakeHeadPosition)
+		if (SNAKE_POSITION_HISTORY.length > snake.length - 1)
+			SNAKE_POSITION_HISTORY.splice(snake.length - 1)
+	}, [snakeHeadPosition])
 
-	console.log(SNAKE_POSITION_HISTORY)
-
-	const snakePositionSetter = (
+	const snakeHeadPositionetter = (
 		previousState: any,
 		axis: string,
-		snakePart: string,
-		direction: number
+		direction: number,
+		orientation: string
 	) => {
-		const lvl = `level-${level}`
-
 		return {
 			...previousState,
-			...{
-				[lvl]: {
-					...previousState[lvl],
-					...{
-						[snakePart]: {
-							x:
-								axis === "x"
-									? previousState[lvl][snakePart]?.x +
-									  SNAKE_PART_SIZE * direction
-									: previousState[lvl][snakePart]?.x,
-							y:
-								axis === "y"
-									? previousState[lvl][snakePart]?.y +
-									  SNAKE_PART_SIZE * direction
-									: previousState[lvl][snakePart]?.y
-						}
-					}
-				}
-			}
+			x:
+				axis === "x"
+					? previousState.x + SNAKE_PART_SIZE * direction
+					: previousState.x,
+			y:
+				axis === "y"
+					? previousState.y + SNAKE_PART_SIZE * direction
+					: previousState.y,
+			dir: orientation
 		}
 	}
 
 	const gameIsOver = () => {
 		setGameOver(true)
-		setSnakePositions(INITIAL_SNAKEPOSITIONS)
+		setSnakeHeadPosition(INITIAL_SNAKEPOSITION)
 	}
 
 	const foodIsEaten = () => {
@@ -107,92 +87,102 @@ const App = () => {
 		return
 	}
 
-	// if (
-	// 	snakePositions.x === foodPosition.x &&
-	// 	snakePositions.y === foodPosition.y
-	// )
-	// 	foodIsEaten()
+	if (
+		snakeHeadPosition.x === foodPosition.x &&
+		snakeHeadPosition.y === foodPosition.y
+	)
+		foodIsEaten()
 
-	// if (
-	// 	snakePositions.x < 0 ||
-	// 	snakePositions.y < 0 ||
-	// 	snakePositions.x >= ARENA_SIZE_X ||
-	// 	snakePositions.y >= ARENA_SIZE_Y
-	// )
-	// 	gameIsOver()
+	if (
+		snakeHeadPosition.x < 0 ||
+		snakeHeadPosition.y < 0 ||
+		snakeHeadPosition.x >= ARENA_SIZE_X ||
+		snakeHeadPosition.y >= ARENA_SIZE_Y
+	)
+		gameIsOver()
 
 	const handleMovement = (event: any) => {
 		const { key } = event
 
 		if (key === "ArrowRight") {
-			setSnakeHeadDirection("right")
-			snake.forEach((snakePart: string) =>
-				setSnakePositions((previousState: any) =>
-					snakePositionSetter(previousState, "x", snakePart, 1)
-				)
-			)
-			setTickCounter(tick => tick + 1)
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "left") return previousState
+				return snakeHeadPositionetter(previousState, "x", 1, "right")
+			})
 		}
 		if (key === "ArrowLeft") {
-			setSnakeHeadDirection("left")
-			snake.forEach((snakePart: string) =>
-				setSnakePositions((previousState: any) =>
-					snakePositionSetter(previousState, "x", snakePart, -1)
-				)
-			)
-			setTickCounter(tick => tick + 1)
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "right") return previousState
+				return snakeHeadPositionetter(previousState, "x", -1, "left")
+			})
 		}
 		if (key === "ArrowDown") {
-			setSnakeHeadDirection("down")
-			snake.forEach((snakePart: string) =>
-				setSnakePositions((previousState: any) =>
-					snakePositionSetter(previousState, "y", snakePart, 1)
-				)
-			)
-			setTickCounter(tick => tick + 1)
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "up") return previousState
+				return snakeHeadPositionetter(previousState, "y", 1, "down")
+			})
 		}
 		if (key === "ArrowUp") {
-			setSnakeHeadDirection("up")
-			snake.forEach((snakePart: string) =>
-				setSnakePositions((previousState: any) =>
-					snakePositionSetter(previousState, "y", snakePart, -1)
-				)
-			)
-			setTickCounter(tick => tick + 1)
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "down") return previousState
+				return snakeHeadPositionetter(previousState, "y", -1, "up")
+			})
 		}
+		setTickCounter(tick => tick + 1)
 	}
 
 	return (
 		<div className="App">
 			<div className="score">Score: {score}</div>
 			{!gameOver && (
-				<div
-					className="arena"
-					style={{ width: `${ARENA_SIZE_X}px`, height: `${ARENA_SIZE_Y}px` }}
-				>
-					{snake.map((snakePart: string, index: number) => {
-						return (
-							<Snake
-								snakeHeadDirection={snakeHeadDirection}
-								snakePositions={snakePositions}
-								snakeSize={SNAKE_PART_SIZE}
-								snakePart={snakePart}
-								level={`level-${level}`}
-								key={snakePart}
-							/>
-						)
-					})}
-
+				<>
 					<div
-						className="food egg"
-						style={{
-							top: foodPosition.y,
-							left: foodPosition.x,
-							width: `${SNAKE_PART_SIZE}px`,
-							height: `${SNAKE_PART_SIZE}px`
-						}}
-					></div>
-				</div>
+						className="arena devMode"
+						style={{ width: `${ARENA_SIZE_X}px`, height: `${ARENA_SIZE_Y}px` }}
+					>
+						{snake.map((snakePart: string, index: number) => {
+							return (
+								<Snake
+									snakeHeadPosition={snakeHeadPosition}
+									snakeBodyPartPosition={SNAKE_POSITION_HISTORY}
+									snakePartSize={SNAKE_PART_SIZE}
+									snakePart={snakePart}
+									key={snakePart}
+									index={index}
+								/>
+							)
+						})}
+
+						<div
+							className="food egg"
+							style={{
+								top: foodPosition.y,
+								left: foodPosition.x,
+								width: `${SNAKE_PART_SIZE}px`,
+								height: `${SNAKE_PART_SIZE}px`
+							}}
+						></div>
+					</div>
+					{devToolsActivated && (
+						<div className="devTools">
+							<p>
+								Snake Head Location: {snakeHeadPosition.x}x |{" "}
+								{snakeHeadPosition.y}y
+							</p>
+							<p>{"History (newest <-> oldest)"}</p>
+							<div>
+								{SNAKE_POSITION_HISTORY.map((positionData, index) => (
+									<div className="historyBox" key={index}>
+										<p>
+											Bodypart: {positionData.x}x | {positionData.y}y
+										</p>
+										<p>Orientation: {positionData.dir}</p>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+				</>
 			)}
 			{gameOver && (
 				<div className="game-over">
