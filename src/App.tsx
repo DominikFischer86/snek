@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 import Snake from "./components/Snake"
 
@@ -20,8 +20,8 @@ const INITIAL_SNAKEPOSITION = {
 }
 const SNAKE_POSITION_HISTORY: any[] = []
 
-const registerMovement = (handleEvent: any) =>
-	document.addEventListener("keydown", handleEvent)
+const registerMovement = (handleEvent: any, gameOver: boolean) =>{
+	gameOver ? document.removeEventListener("keydown", handleEvent) : document.addEventListener("keydown", handleEvent)}
 
 const App = () => {
 	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_PART_SIZE
@@ -42,7 +42,7 @@ const App = () => {
 	const [gameOver, setGameOver] = useState(false)
 
 	useEffect(() => {
-		registerMovement(handleMovement)
+		registerMovement(handleMovement, gameOver)
 	}, [])
 
 	useEffect(() => {
@@ -104,7 +104,15 @@ const App = () => {
 	)
 		gameIsOver()
 
-	const handleMovement = (event: any) => {
+	if (
+		SNAKE_POSITION_HISTORY.find(
+			position =>
+				position.x === snakeHeadPosition.x && position.y === snakeHeadPosition.y
+		)
+	)
+		gameIsOver()
+
+	const handleMovement = useCallback((event: any) => {
 		const { key } = event
 
 		if (key === "ArrowRight") {
@@ -132,7 +140,9 @@ const App = () => {
 			})
 		}
 		setTickCounter(tick => tick + 1)
-	}
+	}, [])
+
+	if (gameOver) document.removeEventListener("keydown", handleMovement)
 
 	return (
 		<div className="App">
