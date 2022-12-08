@@ -43,8 +43,7 @@
 }
 
 .arena.devMode {
-	background: repeating-conic-gradient(#eee 0% 25%, transparent 0% 50%) 50% /
-		40px 40px;
+	background: repeating-conic-gradient(#eee 0% 25%, transparent 0% 50%) 50% / 40px 40px;
 	background-position: 0 0;
 }
 
@@ -83,7 +82,7 @@
 }
 
 .snek.right {
-	border-right: 0
+	border-right: 0;
 }
 
 .snek.left {
@@ -98,7 +97,7 @@
 
 .snek.down {
 	transform: rotate(90deg);
-	border-right: 0
+	border-right: 0;
 }
 
 .snek.head:after {

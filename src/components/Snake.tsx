@@ -14,9 +14,7 @@ const Snake = ({
 	index
 }: SnakePropTypes) => {
 	const bodyPartOrientation =
-		snakePart === "head"
-			? snakeHeadPosition.dir
-			: snakeBodyPartPosition[index - 1]?.dir
+		snakePart === "head" ? snakeHeadPosition.dir : snakeBodyPartPosition[index - 1]?.dir
 
 	const noWiggle =
 		snakeBodyPartPosition[snakeBodyPartPosition.length - 1]?.dir !==
@@ -24,18 +22,10 @@ const Snake = ({
 
 	return (
 		<div
-			className={`snek ${bodyPartOrientation} ${snakePart} ${
-				noWiggle ? "stopWiggle" : ""
-			}`}
+			className={`snek ${bodyPartOrientation} ${snakePart} ${noWiggle ? "stopWiggle" : ""}`}
 			style={{
-				top:
-					snakePart === "head"
-						? snakeHeadPosition.y
-						: snakeBodyPartPosition[index - 1]?.y,
-				left:
-					snakePart === "head"
-						? snakeHeadPosition.x
-						: snakeBodyPartPosition[index - 1]?.x,
+				top: snakePart === "head" ? snakeHeadPosition.y : snakeBodyPartPosition[index - 1]?.y,
+				left: snakePart === "head" ? snakeHeadPosition.x : snakeBodyPartPosition[index - 1]?.x,
 				width: `${snakePartSize}px`,
 				height: `${snakePartSize}px`
 			}}

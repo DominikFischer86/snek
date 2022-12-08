@@ -35,17 +35,13 @@ const registerMovement = (handleEvent: any, gameOver: boolean) => {
 const App = () => {
 	const [score, setScore] = useState(0)
 	const [level, setLevel] = useState(0)
-	const [snakeHeadPosition, setSnakeHeadPosition] = useState(
-		INITIAL_SNAKEPOSITION
-	)
-
+	const [snakeHeadPosition, setSnakeHeadPosition] = useState(INITIAL_SNAKEPOSITION)
 	const [snake, setSnake] = useState(BASE_SNAKE)
+	const [gameOver, setGameOver] = useState(false)
 	const [foodPosition, setFoodPosition] = useState({
 		x: getFoodLocation().x,
 		y: getFoodLocation().y
 	})
-
-	const [gameOver, setGameOver] = useState(false)
 
 	useEffect(() => {
 		registerMovement(handleMovement, gameOver)
@@ -65,14 +61,8 @@ const App = () => {
 	) => {
 		return {
 			...previousState,
-			x:
-				axis === "x"
-					? previousState.x + SNAKE_PART_SIZE * direction
-					: previousState.x,
-			y:
-				axis === "y"
-					? previousState.y + SNAKE_PART_SIZE * direction
-					: previousState.y,
+			x: axis === "x" ? previousState.x + SNAKE_PART_SIZE * direction : previousState.x,
+			y: axis === "y" ? previousState.y + SNAKE_PART_SIZE * direction : previousState.y,
 			dir: orientation
 		}
 	}
@@ -95,8 +85,7 @@ const App = () => {
 
 		if (
 			SNAKE_POSITION_HISTORY.find(
-				position =>
-					position.x === newFoodPositionX && position.y === newFoodPositionY
+				position => position.x === newFoodPositionX && position.y === newFoodPositionY
 			)
 		)
 			return
@@ -107,10 +96,7 @@ const App = () => {
 		})
 	}
 
-	if (
-		snakeHeadPosition.x === foodPosition.x &&
-		snakeHeadPosition.y === foodPosition.y
-	)
+	if (snakeHeadPosition.x === foodPosition.x && snakeHeadPosition.y === foodPosition.y)
 		foodIsEaten()
 
 	if (
@@ -123,8 +109,7 @@ const App = () => {
 
 	if (
 		SNAKE_POSITION_HISTORY.find(
-			position =>
-				position.x === snakeHeadPosition.x && position.y === snakeHeadPosition.y
+			position => position.x === snakeHeadPosition.x && position.y === snakeHeadPosition.y
 		)
 	)
 		gameIsOver()
@@ -134,13 +119,15 @@ const App = () => {
 
 		if (key === "ArrowRight") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "left") return snakeHeadPositionetter(previousState, "x", -1, "left")
+				if (previousState.dir === "left")
+					return snakeHeadPositionetter(previousState, "x", -1, "left")
 				return snakeHeadPositionetter(previousState, "x", 1, "right")
 			})
 		}
 		if (key === "ArrowLeft") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "right") return snakeHeadPositionetter(previousState, "x", 1, "right")
+				if (previousState.dir === "right")
+					return snakeHeadPositionetter(previousState, "x", 1, "right")
 				return snakeHeadPositionetter(previousState, "x", -1, "left")
 			})
 		}
@@ -152,7 +139,8 @@ const App = () => {
 		}
 		if (key === "ArrowUp") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "down") return snakeHeadPositionetter(previousState, "y", 1, "down")
+				if (previousState.dir === "down")
+					return snakeHeadPositionetter(previousState, "y", 1, "down")
 				return snakeHeadPositionetter(previousState, "y", -1, "up")
 			})
 		}
@@ -162,7 +150,10 @@ const App = () => {
 
 	return (
 		<div className="App">
-			<div className="score"><p>Score: {score}</p><p>Level: {level}</p></div>
+			<div className="score">
+				<p>Score: {score}</p>
+				<p>Level: {level}</p>
+			</div>
 			{!gameOver && (
 				<>
 					<div
