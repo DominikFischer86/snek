@@ -162,7 +162,7 @@ const App = () => {
 
 	return (
 		<div className="App">
-			<div className="score">Score: {score}</div>
+			<div className="score"><p>Score: {score}</p><p>Level: {level}</p></div>
 			{!gameOver && (
 				<>
 					<div

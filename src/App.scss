@@ -6,7 +6,7 @@
 }
 
 .App {
-	width: 800px;
+	width: 500px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -50,6 +50,9 @@
 
 .score {
 	font-weight: bold;
+	display: flex;
+	justify-content: space-between;
+	width: 500px;
 }
 
 .snek {
@@ -136,10 +139,10 @@
 
 .game-over {
 	border: 5px solid red;
-	padding: 2rem;
 	font-weight: bold;
 	font-size: 30px;
 	text-transform: uppercase;
+	width: 500px;
 }
 
 .devTools {
