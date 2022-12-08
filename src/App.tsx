@@ -38,7 +38,7 @@ const App = () => {
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(
 		INITIAL_SNAKEPOSITION
 	)
-	const [tickCounter, setTickCounter] = useState(0)
+
 	const [snake, setSnake] = useState(BASE_SNAKE)
 	const [foodPosition, setFoodPosition] = useState({
 		x: getFoodLocation().x,
@@ -134,29 +134,28 @@ const App = () => {
 
 		if (key === "ArrowRight") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "left") return previousState
+				if (previousState.dir === "left") return snakeHeadPositionetter(previousState, "x", -1, "left")
 				return snakeHeadPositionetter(previousState, "x", 1, "right")
 			})
 		}
 		if (key === "ArrowLeft") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "right") return previousState
+				if (previousState.dir === "right") return snakeHeadPositionetter(previousState, "x", 1, "right")
 				return snakeHeadPositionetter(previousState, "x", -1, "left")
 			})
 		}
 		if (key === "ArrowDown") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "up") return previousState
+				if (previousState.dir === "up") return snakeHeadPositionetter(previousState, "y", -1, "up")
 				return snakeHeadPositionetter(previousState, "y", 1, "down")
 			})
 		}
 		if (key === "ArrowUp") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "down") return previousState
+				if (previousState.dir === "down") return snakeHeadPositionetter(previousState, "y", 1, "down")
 				return snakeHeadPositionetter(previousState, "y", -1, "up")
 			})
 		}
-		setTickCounter(tick => tick + 1)
 	}, [])
 
 	if (gameOver) document.removeEventListener("keydown", handleMovement)
