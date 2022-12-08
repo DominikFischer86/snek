@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from "react"
 
 import Snake from "./components/Snake"
+import Score from "./components/Score"
+import GameOver from "./components/GameOver"
+import Food from "./components/Food"
 
 import "./App.scss"
 
@@ -10,7 +13,8 @@ const SNAKE_PART_SIZE = 20
 const RATIO_X = ARENA_SIZE_X / SNAKE_PART_SIZE
 const RATIO_Y = ARENA_SIZE_Y / SNAKE_PART_SIZE
 
-const FOOD_TYPES = ["egg", "chicken"]
+const FOOD_TYPES = ["egg", "chicken", "steak"]
+const SCORE_PER_FOOD_TYPE = [1, 2, 5]
 const BASE_SNAKE = ["head", "body_0", "tail"]
 
 const INITIAL_SNAKEPOSITION = {
@@ -37,6 +41,7 @@ const App = () => {
 	const [level, setLevel] = useState(0)
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(INITIAL_SNAKEPOSITION)
 	const [snake, setSnake] = useState(BASE_SNAKE)
+	const [food, setFood] = useState(FOOD_TYPES[0])
 	const [gameOver, setGameOver] = useState(false)
 	const [foodPosition, setFoodPosition] = useState({
 		x: getFoodLocation().x,
@@ -72,8 +77,17 @@ const App = () => {
 		setSnakeHeadPosition(INITIAL_SNAKEPOSITION)
 	}
 
+	const setFoodKind = () => {
+		const threshold = Math.random()
+		console.log(threshold)
+
+		const foodIndex = threshold > 0.9 ? 2 : threshold > 0.7 ? 1 : 0
+
+		return setFood(FOOD_TYPES[foodIndex])
+	}
+
 	const foodIsEaten = () => {
-		setScore(score => score + 1)
+		setScore(score => score + SCORE_PER_FOOD_TYPE[FOOD_TYPES.indexOf(food)])
 		setLevel(level => level + 1)
 		setSnake(oldSnake => {
 			const newSnake = oldSnake.slice(1)
@@ -90,6 +104,7 @@ const App = () => {
 		)
 			return
 
+		setFoodKind()
 		setFoodPosition({
 			x: newFoodPositionX,
 			y: newFoodPositionY
@@ -150,14 +165,10 @@ const App = () => {
 
 	return (
 		<div className="App">
-			<div className="score">
-				<p>Score: {score}</p>
-				<p>Level: {level}</p>
-			</div>
 			{!gameOver && (
 				<>
 					<div
-						className="arena devMode"
+						className="arena"
 						style={{ width: `${ARENA_SIZE_X}px`, height: `${ARENA_SIZE_Y}px` }}
 					>
 						{snake.map((snakePart: string, index: number) => {
@@ -172,24 +183,12 @@ const App = () => {
 								/>
 							)
 						})}
-
-						<div
-							className="food egg"
-							style={{
-								top: foodPosition.y,
-								left: foodPosition.x,
-								width: `${SNAKE_PART_SIZE}px`,
-								height: `${SNAKE_PART_SIZE}px`
-							}}
-						></div>
+						<Food food={food} foodPosition={foodPosition} snakePartSize={SNAKE_PART_SIZE} />
 					</div>
 				</>
 			)}
-			{gameOver && (
-				<div className="game-over">
-					<p>Game Over!</p>
-				</div>
-			)}
+			{gameOver && <GameOver />}
+			<Score score={score} level={level} />
 		</div>
 	)
 }
