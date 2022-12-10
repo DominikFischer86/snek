@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 
 import { useInterval } from "./hooks/useInterval"
+import { useLocalStorage } from "./hooks/useLocalStorage"
 
 import Snake from "./components/Snake"
 import Score from "./components/Score"
@@ -40,11 +41,11 @@ const registerMovement = (handleEvent: any, gameOver: boolean) => {
 		: document.addEventListener("keydown", handleEvent)
 }
 
-const isActive = false
+let isActive = false
 
 const App = () => {
 	const [score, setScore] = useState(0)
-	const [highScore, setHighScore] = useState(0)
+	const [highScore, setHighScore] = useLocalStorage("highscore", 0)
 	const [level, setLevel] = useState(0)
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(INITIAL_SNAKEPOSITION)
 	const [snake, setSnake] = useState(BASE_SNAKE)
@@ -102,6 +103,14 @@ const App = () => {
 	}
 
 	const moveSnake = (key: string) => {
+		if (
+			key !== "ArrowRight" &&
+			key !== "ArrowLeft" &&
+			key !== "ArrowDown" &&
+			key !== "ArrowUp" &&
+			key !== "Enter"
+		)
+			return
 		setActiveKey(key)
 		if (key === "ArrowRight") {
 			setSnakeHeadPosition((previousState: any) => {
@@ -138,6 +147,8 @@ const App = () => {
 
 	const gameIsOver = () => {
 		setGameOver(true)
+		if (score > highScore) setHighScore(score)
+		setScore(0)
 		setSnakeHeadPosition(INITIAL_SNAKEPOSITION)
 	}
 
@@ -193,7 +204,7 @@ const App = () => {
 
 	const handleMovement = useCallback((event: any) => {
 		const { key, repeat } = event
-		if (repeat) return
+		if (repeat || key === "Enter") return
 
 		moveSnake(key)
 	}, [])
