@@ -34,6 +34,15 @@
 	}
 }
 
+@keyframes float {
+	0% {
+		transform: translateY(0px);
+	}
+	100% {
+		transform: translateY(-5px);
+	}
+}
+
 /* Assets */
 
 .arena {
@@ -114,6 +123,10 @@
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
 	z-index: 1;
+	animation-duration: 0.5s;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+	animation-name: float;
 }
 
 .food.steak:after {
