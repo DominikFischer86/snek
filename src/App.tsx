@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 
+import { useInterval } from "./hooks/useInterval"
+
 import Snake from "./components/Snake"
 import Score from "./components/Score"
 import GameOver from "./components/GameOver"
@@ -10,6 +12,7 @@ import "./App.scss"
 const ARENA_SIZE_X = 500
 const ARENA_SIZE_Y = 500
 const SNAKE_PART_SIZE = 20
+const SNAKE_SPEED = 100
 const RATIO_X = ARENA_SIZE_X / SNAKE_PART_SIZE
 const RATIO_Y = ARENA_SIZE_Y / SNAKE_PART_SIZE
 
@@ -48,6 +51,18 @@ const App = () => {
 		y: getFoodLocation().y
 	})
 
+	useInterval(() => {
+		setSnakeHeadPosition((previousState: any) => {
+			if (previousState.dir === "left")
+				return snakeHeadPositionSetter(previousState, "x", -1, "left")
+			if (previousState.dir === "right")
+				return snakeHeadPositionSetter(previousState, "x", 1, "right")
+			if (previousState.dir === "up") return snakeHeadPositionSetter(previousState, "y", -1, "up")
+			if (previousState.dir === "down")
+				return snakeHeadPositionSetter(previousState, "y", 1, "down")
+		})
+	}, SNAKE_SPEED)
+
 	useEffect(() => {
 		registerMovement(handleMovement, gameOver)
 	}, [])
@@ -66,8 +81,14 @@ const App = () => {
 	) => {
 		return {
 			...previousState,
-			x: axis === "x" ? previousState.x + SNAKE_PART_SIZE * direction : previousState.x,
-			y: axis === "y" ? previousState.y + SNAKE_PART_SIZE * direction : previousState.y,
+			x:
+				axis === "x" && direction !== 0
+					? previousState.x + SNAKE_PART_SIZE * direction
+					: previousState.x,
+			y:
+				axis === "y" && direction !== 0
+					? previousState.y + SNAKE_PART_SIZE * direction
+					: previousState.y,
 			dir: orientation
 		}
 	}
@@ -109,7 +130,7 @@ const App = () => {
 		})
 	}
 
-	if (snakeHeadPosition.x === foodPosition.x && snakeHeadPosition.y === foodPosition.y)
+	if (snakeHeadPosition?.x === foodPosition.x && snakeHeadPosition?.y === foodPosition.y)
 		foodIsEaten()
 
 	if (
@@ -128,7 +149,8 @@ const App = () => {
 		gameIsOver()
 
 	const handleMovement = useCallback((event: any) => {
-		const { key } = event
+		const { key, repeat } = event
+		if (repeat) return
 
 		if (key === "ArrowRight") {
 			setSnakeHeadPosition((previousState: any) => {
