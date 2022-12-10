@@ -6,6 +6,7 @@ import Snake from "./components/Snake"
 import Score from "./components/Score"
 import GameOver from "./components/GameOver"
 import Food from "./components/Food"
+import Controls from "./components/Controls"
 
 import "./App.scss"
 
@@ -39,12 +40,16 @@ const registerMovement = (handleEvent: any, gameOver: boolean) => {
 		: document.addEventListener("keydown", handleEvent)
 }
 
+const isActive = false
+
 const App = () => {
 	const [score, setScore] = useState(0)
+	const [highScore, setHighScore] = useState(0)
 	const [level, setLevel] = useState(0)
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(INITIAL_SNAKEPOSITION)
 	const [snake, setSnake] = useState(BASE_SNAKE)
 	const [food, setFood] = useState(FOOD_TYPES[0])
+	const [activeKey, setActiveKey] = useState("")
 	const [gameOver, setGameOver] = useState(false)
 	const [foodPosition, setFoodPosition] = useState({
 		x: getFoodLocation().x,
@@ -52,15 +57,18 @@ const App = () => {
 	})
 
 	useInterval(() => {
-		setSnakeHeadPosition((previousState: any) => {
-			if (previousState.dir === "left")
-				return snakeHeadPositionSetter(previousState, "x", -1, "left")
-			if (previousState.dir === "right")
-				return snakeHeadPositionSetter(previousState, "x", 1, "right")
-			if (previousState.dir === "up") return snakeHeadPositionSetter(previousState, "y", -1, "up")
-			if (previousState.dir === "down")
-				return snakeHeadPositionSetter(previousState, "y", 1, "down")
-		})
+		isActive
+			? setSnakeHeadPosition((previousState: any) => {
+					if (previousState.dir === "left")
+						return snakeHeadPositionSetter(previousState, "x", -1, "left")
+					if (previousState.dir === "right")
+						return snakeHeadPositionSetter(previousState, "x", 1, "right")
+					if (previousState.dir === "up")
+						return snakeHeadPositionSetter(previousState, "y", -1, "up")
+					if (previousState.dir === "down")
+						return snakeHeadPositionSetter(previousState, "y", 1, "down")
+			  })
+			: null
 	}, SNAKE_SPEED)
 
 	useEffect(() => {
@@ -91,6 +99,41 @@ const App = () => {
 					: previousState.y,
 			dir: orientation
 		}
+	}
+
+	const moveSnake = (key: string) => {
+		setActiveKey(key)
+		if (key === "ArrowRight") {
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "left")
+					return snakeHeadPositionSetter(previousState, "x", -1, "left")
+				return snakeHeadPositionSetter(previousState, "x", 1, "right")
+			})
+		}
+		if (key === "ArrowLeft") {
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "right")
+					return snakeHeadPositionSetter(previousState, "x", 1, "right")
+				return snakeHeadPositionSetter(previousState, "x", -1, "left")
+			})
+		}
+		if (key === "ArrowDown") {
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "up") return snakeHeadPositionSetter(previousState, "y", -1, "up")
+				return snakeHeadPositionSetter(previousState, "y", 1, "down")
+			})
+		}
+		if (key === "ArrowUp") {
+			setSnakeHeadPosition((previousState: any) => {
+				if (previousState.dir === "down")
+					return snakeHeadPositionSetter(previousState, "y", 1, "down")
+				return snakeHeadPositionSetter(previousState, "y", -1, "up")
+			})
+		}
+	}
+
+	const handleMobileButtonClick = (event: any) => {
+		moveSnake(event.target.className)
 	}
 
 	const gameIsOver = () => {
@@ -152,33 +195,7 @@ const App = () => {
 		const { key, repeat } = event
 		if (repeat) return
 
-		if (key === "ArrowRight") {
-			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "left")
-					return snakeHeadPositionSetter(previousState, "x", -1, "left")
-				return snakeHeadPositionSetter(previousState, "x", 1, "right")
-			})
-		}
-		if (key === "ArrowLeft") {
-			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "right")
-					return snakeHeadPositionSetter(previousState, "x", 1, "right")
-				return snakeHeadPositionSetter(previousState, "x", -1, "left")
-			})
-		}
-		if (key === "ArrowDown") {
-			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "up") return snakeHeadPositionSetter(previousState, "y", -1, "up")
-				return snakeHeadPositionSetter(previousState, "y", 1, "down")
-			})
-		}
-		if (key === "ArrowUp") {
-			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "down")
-					return snakeHeadPositionSetter(previousState, "y", 1, "down")
-				return snakeHeadPositionSetter(previousState, "y", -1, "up")
-			})
-		}
+		moveSnake(key)
 	}, [])
 
 	if (gameOver) document.removeEventListener("keydown", handleMovement)
@@ -208,7 +225,8 @@ const App = () => {
 				</>
 			)}
 			{gameOver && <GameOver />}
-			<Score score={score} level={level} />
+			<Score score={score} level={level} highScore={highScore} />
+			{!gameOver && <Controls onClickHandler={handleMobileButtonClick} activeKey={activeKey} />}
 		</div>
 	)
 }

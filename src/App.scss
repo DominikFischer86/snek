@@ -1,3 +1,14 @@
+body {
+	background: rgb(176, 255, 0);
+	background: linear-gradient(
+		124deg,
+		rgba(176, 255, 0, 1) 0%,
+		rgba(255, 255, 255, 1) 38%,
+		rgba(255, 255, 255, 1) 58%,
+		rgba(0, 119, 8, 1) 100%
+	);
+}
+
 #root {
 	max-width: 1280px;
 	margin: 0 auto;
@@ -47,10 +58,19 @@
 
 .arena {
 	outline: 5px double #000;
-	//background: rgba(217, 255, 192, 0.658);
-	background: repeating-conic-gradient(#eee 0% 25%, transparent 0% 50%) 50% / 40px 40px;
+	background: url(./assets/white-waves.webp);
 	background-position: 0 0;
 	position: relative;
+
+	&:after {
+		background: rgb(255, 240, 104, .2);
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+	}
 }
 
 .score {
@@ -60,6 +80,10 @@
 	justify-content: space-between;
 	width: 500px;
 	font-size: 30px;
+
+	@media screen and (max-width: 1027px) {
+		border-bottom: 2px dashed #000;
+	}
 }
 
 .snek {
@@ -143,6 +167,72 @@
 	content: "🥚";
 }
 
+/* Controls */
+.mobile-controls {
+	width: 220px;
+	height: 220px;
+	border-radius: 50%;
+	position: relative;
+	margin-top: 80px;
+	display: none;
+
+	@media screen and (max-width: 1028px) {
+		display: block;
+	}
+
+	button {
+		background: none;
+		font-size: 100px;
+		display: block;
+		position: absolute;
+		border: 0;
+		outline: 0;
+		filter: hue-rotate(255deg);
+		transform-origin: center;
+		padding: 0;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+
+		&:after {
+			width: 50px;
+			height: 50px;
+		}
+
+		&.ArrowRight {
+			transform: translate(50%, -50%);
+
+			&:after {
+				content: "▶️";
+			}
+		}
+
+		&.ArrowDown {
+			transform: translate(-50%, 40%) scaleY(-1);
+
+			&:after {
+				content: "🔼";
+			}
+		}
+
+		&.ArrowUp {
+			transform: translate(-50%, -140%);
+
+			&:after {
+				content: "🔼";
+			}
+		}
+
+		&.ArrowLeft {
+			transform: translate(-150%, -50%);
+
+			&:after {
+				content: "◀️";
+			}
+		}
+	}
+}
+
 /* Screens */
 
 .game-over {
@@ -151,27 +241,4 @@
 	font-size: 30px;
 	text-transform: uppercase;
 	width: 500px;
-}
-
-.devTools {
-	width: 100%;
-}
-
-.devTools > div {
-	display: flex;
-}
-
-.historyBox {
-	display: flex;
-	border: 1px solid #aaa;
-	flex-direction: column;
-	flex: 0 1 50%;
-	padding: 1rem;
-}
-
-.historyBox ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	text-align: left;
 }
