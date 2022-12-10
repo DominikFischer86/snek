@@ -55,9 +55,11 @@
 
 .score {
 	font-weight: bold;
+	font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 	display: flex;
 	justify-content: space-between;
 	width: 500px;
+	font-size: 30px;
 }
 
 .snek {
