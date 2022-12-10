@@ -58,7 +58,7 @@ const App = () => {
 			SNAKE_POSITION_HISTORY.splice(snake.length - 1)
 	}, [snakeHeadPosition])
 
-	const snakeHeadPositionetter = (
+	const snakeHeadPositionSetter = (
 		previousState: any,
 		axis: string,
 		direction: number,
@@ -79,8 +79,6 @@ const App = () => {
 
 	const setFoodKind = () => {
 		const threshold = Math.random()
-		console.log(threshold)
-
 		const foodIndex = threshold > 0.9 ? 2 : threshold > 0.7 ? 1 : 0
 
 		return setFood(FOOD_TYPES[foodIndex])
@@ -135,28 +133,28 @@ const App = () => {
 		if (key === "ArrowRight") {
 			setSnakeHeadPosition((previousState: any) => {
 				if (previousState.dir === "left")
-					return snakeHeadPositionetter(previousState, "x", -1, "left")
-				return snakeHeadPositionetter(previousState, "x", 1, "right")
+					return snakeHeadPositionSetter(previousState, "x", -1, "left")
+				return snakeHeadPositionSetter(previousState, "x", 1, "right")
 			})
 		}
 		if (key === "ArrowLeft") {
 			setSnakeHeadPosition((previousState: any) => {
 				if (previousState.dir === "right")
-					return snakeHeadPositionetter(previousState, "x", 1, "right")
-				return snakeHeadPositionetter(previousState, "x", -1, "left")
+					return snakeHeadPositionSetter(previousState, "x", 1, "right")
+				return snakeHeadPositionSetter(previousState, "x", -1, "left")
 			})
 		}
 		if (key === "ArrowDown") {
 			setSnakeHeadPosition((previousState: any) => {
-				if (previousState.dir === "up") return snakeHeadPositionetter(previousState, "y", -1, "up")
-				return snakeHeadPositionetter(previousState, "y", 1, "down")
+				if (previousState.dir === "up") return snakeHeadPositionSetter(previousState, "y", -1, "up")
+				return snakeHeadPositionSetter(previousState, "y", 1, "down")
 			})
 		}
 		if (key === "ArrowUp") {
 			setSnakeHeadPosition((previousState: any) => {
 				if (previousState.dir === "down")
-					return snakeHeadPositionetter(previousState, "y", 1, "down")
-				return snakeHeadPositionetter(previousState, "y", -1, "up")
+					return snakeHeadPositionSetter(previousState, "y", 1, "down")
+				return snakeHeadPositionSetter(previousState, "y", -1, "up")
 			})
 		}
 	}, [])
