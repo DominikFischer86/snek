@@ -41,7 +41,7 @@ const registerMovement = (handleEvent: any, gameOver: boolean) => {
 		: document.addEventListener("keydown", handleEvent)
 }
 
-let isActive = false
+let isActive = true
 
 const App = () => {
 	const [score, setScore] = useState(0)
@@ -166,9 +166,11 @@ const App = () => {
 		celebrationBlock.current.innerHTML = wordEffect
 		celebrationBlock.current.className = "effect animate"
 
-		highscore === "highscore" ? Object.values(scoreBlocks.current.children).map(
-			(htmlPElement: any) => (htmlPElement.className = "bling")
-		): scoreBlocks.current.children[0].className = "bling"
+		highscore === "highscore"
+			? Object.values(scoreBlocks.current.children).map(
+					(htmlPElement: any) => (htmlPElement.className = "bling")
+			  )
+			: (scoreBlocks.current.children[0].className = "bling")
 
 		setTimeout(() => {
 			celebrationBlock.current.className = "effect"
