@@ -147,8 +147,6 @@ const App = () => {
 
 	const gameIsOver = () => {
 		setGameOver(true)
-		if (score > highScore) setHighScore(score)
-		setScore(0)
 		setSnakeHeadPosition(INITIAL_SNAKEPOSITION)
 	}
 
@@ -162,6 +160,7 @@ const App = () => {
 	const foodIsEaten = () => {
 		setScore(score => score + SCORE_PER_FOOD_TYPE[FOOD_TYPES.indexOf(food)])
 		setLevel(level => level + 1)
+		if (score > highScore) setHighScore(score)
 		setSnake(oldSnake => {
 			const newSnake = oldSnake.slice(1)
 			return ["head", `body-${level}`, ...newSnake]
@@ -196,7 +195,7 @@ const App = () => {
 		gameIsOver()
 
 	if (
-		SNAKE_POSITION_HISTORY.find(
+		!gameOver && SNAKE_POSITION_HISTORY.find(
 			position => position.x === snakeHeadPosition.x && position.y === snakeHeadPosition.y
 		)
 	)
