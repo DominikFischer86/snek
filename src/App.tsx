@@ -9,25 +9,21 @@ import GameOver from "./components/GameOver"
 import Food from "./components/Food"
 import Controls from "./components/Controls"
 
+import {
+	SNAKE_PART_SIZE,
+	RATIO_X,
+	RATIO_Y,
+	BASE_SNAKE,
+	SNAKE_SPEED,
+	INITIAL_SNAKEPOSITION,
+	SNAKE_POSITION_HISTORY,
+	FOOD_TYPES,
+	SCORE_PER_FOOD_TYPE,
+	ARENA_SIZE_X,
+	ARENA_SIZE_Y
+} from "./configs/gameConfig"
+
 import "./App.scss"
-
-const ARENA_SIZE_X = 500
-const ARENA_SIZE_Y = 500
-const SNAKE_PART_SIZE = 20
-const SNAKE_SPEED = 100
-const RATIO_X = ARENA_SIZE_X / SNAKE_PART_SIZE
-const RATIO_Y = ARENA_SIZE_Y / SNAKE_PART_SIZE
-
-const FOOD_TYPES = ["egg", "chicken", "steak"]
-const SCORE_PER_FOOD_TYPE = [1, 2, 5]
-const BASE_SNAKE = ["head", "body_0", "tail"]
-
-const INITIAL_SNAKEPOSITION = {
-	x: 0,
-	y: 0,
-	dir: "right"
-}
-const SNAKE_POSITION_HISTORY: any[] = []
 
 const getFoodLocation = () => {
 	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_PART_SIZE
