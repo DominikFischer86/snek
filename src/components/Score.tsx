@@ -1,12 +1,11 @@
 type ScorePropTypes = {
 	score: number
-	level: number
 	highScore: number
+	scoreRef: any
 }
 
-const Score = ({ score, level, highScore }: ScorePropTypes) => (
-	<div className="score">
-		<p>Level: {level}</p>
+const Score = ({ score, highScore, scoreRef }: ScorePropTypes) => (
+	<div ref={scoreRef} className="score">
 		<p>Score: {score}</p>
 		<p>Highscore: {highScore}</p>
 	</div>

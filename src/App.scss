@@ -74,6 +74,21 @@
 	}
 }
 
+@keyframes bling {
+	0% {
+		transform: scale(1);
+		color: #000;
+	}
+	50% {
+		transform: scale(1.2);
+		color: rgb(253, 207, 0);
+	}
+	100% {
+		transform: scale(1);
+		color: #000;
+	}
+}
+
 /* Assets */
 
 .arena {
@@ -116,6 +131,12 @@
 			margin: 1rem 0;
 		}
 	}
+}
+
+.bling {
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+	animation-name: bling;
 }
 
 .snek {
@@ -203,7 +224,7 @@
 	position: absolute;
 	color: red;
 	z-index: 1;
-	font-weight: bold;	
+	font-weight: bold;
 	text-shadow: 0 0 5px #fff;
 	opacity: 0;
 
@@ -213,7 +234,6 @@
 		animation-name: celebrate;
 	}
 }
-
 
 /* Controls */
 .mobile-controls {

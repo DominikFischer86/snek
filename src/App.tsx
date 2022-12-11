@@ -44,20 +44,21 @@ const registerMovement = (handleEvent: any, gameOver: boolean) => {
 let isActive = false
 
 const App = () => {
-	const celebrationBlock = useRef<any>()
 	const [score, setScore] = useState(0)
 	const [highScore, setHighScore] = useLocalStorage("highscore", 0)
 	const [level, setLevel] = useState(0)
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(INITIAL_SNAKEPOSITION)
 	const [snake, setSnake] = useState(BASE_SNAKE)
 	const [food, setFood] = useState(FOOD_TYPES[0])
-	const [celebrationWord, setCelebrationWord] = useState<string | null>(null)
 	const [activeKey, setActiveKey] = useState("")
 	const [gameOver, setGameOver] = useState(false)
 	const [foodPosition, setFoodPosition] = useState({
 		x: getFoodLocation().x,
 		y: getFoodLocation().y
 	})
+
+	const celebrationBlock = useRef<any>()
+	const scoreBlocks = useRef<any>()
 
 	useInterval(() => {
 		isActive
@@ -160,13 +161,20 @@ const App = () => {
 		return setFood(FOOD_TYPES[foodIndex])
 	}
 
-	const celebrate = (scorePlus: number) => {
+	const celebrate = (scorePlus: number, highscore: string) => {
 		const wordEffect = scorePlus <= SCORE_PER_FOOD_TYPE[1] ? "Nom!" : "Omnom!"
 		celebrationBlock.current.innerHTML = wordEffect
 		celebrationBlock.current.className = "effect animate"
 
+		highscore === "highscore" ? Object.values(scoreBlocks.current.children).map(
+			(htmlPElement: any) => (htmlPElement.className = "bling")
+		): scoreBlocks.current.children[0].className = "bling"
+
 		setTimeout(() => {
 			celebrationBlock.current.className = "effect"
+			Object.values(scoreBlocks.current.children).map(
+				(htmlPElement: any) => (htmlPElement.className = "")
+			)
 		}, 500)
 	}
 
@@ -174,8 +182,13 @@ const App = () => {
 		const scorePlus = SCORE_PER_FOOD_TYPE[FOOD_TYPES.indexOf(food)]
 		setScore(score => score + scorePlus)
 		setLevel(level => level + 1)
-		if (score > highScore) setHighScore(score)
-		celebrate(scorePlus)
+		if (score > highScore) {
+			setHighScore(score)
+			celebrate(scorePlus, "highscore")
+		} else {
+			celebrate(scorePlus, "")
+		}
+
 		setSnake(oldSnake => {
 			const newSnake = oldSnake.slice(1)
 			return ["head", `body-${level}`, ...newSnake]
@@ -261,7 +274,7 @@ const App = () => {
 				</>
 			)}
 			{gameOver && <GameOver />}
-			<Score score={score} level={level} highScore={highScore} />
+			<Score scoreRef={scoreBlocks} score={score} highScore={highScore} />
 			{!gameOver && <Controls onClickHandler={handleMobileButtonClick} activeKey={activeKey} />}
 		</div>
 	)
