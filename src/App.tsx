@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 
 import { useInterval } from "./hooks/useInterval"
 import { useLocalStorage } from "./hooks/useLocalStorage"
@@ -44,12 +44,14 @@ const registerMovement = (handleEvent: any, gameOver: boolean) => {
 let isActive = false
 
 const App = () => {
+	const celebrationBlock = useRef<any>()
 	const [score, setScore] = useState(0)
 	const [highScore, setHighScore] = useLocalStorage("highscore", 0)
 	const [level, setLevel] = useState(0)
 	const [snakeHeadPosition, setSnakeHeadPosition] = useState(INITIAL_SNAKEPOSITION)
 	const [snake, setSnake] = useState(BASE_SNAKE)
 	const [food, setFood] = useState(FOOD_TYPES[0])
+	const [celebrationWord, setCelebrationWord] = useState<string | null>(null)
 	const [activeKey, setActiveKey] = useState("")
 	const [gameOver, setGameOver] = useState(false)
 	const [foodPosition, setFoodPosition] = useState({
@@ -148,6 +150,7 @@ const App = () => {
 	const gameIsOver = () => {
 		setGameOver(true)
 		setSnakeHeadPosition(INITIAL_SNAKEPOSITION)
+		if (score > highScore) setHighScore(score)
 	}
 
 	const setFoodKind = () => {
@@ -157,10 +160,22 @@ const App = () => {
 		return setFood(FOOD_TYPES[foodIndex])
 	}
 
+	const celebrate = (scorePlus: number) => {
+		const wordEffect = scorePlus <= SCORE_PER_FOOD_TYPE[1] ? "Nom!" : "Omnom!"
+		celebrationBlock.current.innerHTML = wordEffect
+		celebrationBlock.current.className = "effect animate"
+
+		setTimeout(() => {
+			celebrationBlock.current.className = "effect"
+		}, 500)
+	}
+
 	const foodIsEaten = () => {
-		setScore(score => score + SCORE_PER_FOOD_TYPE[FOOD_TYPES.indexOf(food)])
+		const scorePlus = SCORE_PER_FOOD_TYPE[FOOD_TYPES.indexOf(food)]
+		setScore(score => score + scorePlus)
 		setLevel(level => level + 1)
 		if (score > highScore) setHighScore(score)
+		celebrate(scorePlus)
 		setSnake(oldSnake => {
 			const newSnake = oldSnake.slice(1)
 			return ["head", `body-${level}`, ...newSnake]
@@ -195,7 +210,8 @@ const App = () => {
 		gameIsOver()
 
 	if (
-		!gameOver && SNAKE_POSITION_HISTORY.find(
+		!gameOver &&
+		SNAKE_POSITION_HISTORY.find(
 			position => position.x === snakeHeadPosition.x && position.y === snakeHeadPosition.y
 		)
 	)
@@ -218,6 +234,16 @@ const App = () => {
 						className="arena"
 						style={{ width: `${ARENA_SIZE_X}px`, height: `${ARENA_SIZE_Y}px` }}
 					>
+						<div
+							className="effect"
+							ref={celebrationBlock}
+							style={{
+								top: snakeHeadPosition.y,
+								left: snakeHeadPosition.x
+							}}
+						>
+							Value
+						</div>
 						{snake.map((snakePart: string, index: number) => {
 							return (
 								<Snake
