@@ -27,6 +27,12 @@ import {
 } from "./configs/gameConfig"
 
 import "./App.scss"
+import "./styles/animations.scss"
+import "./styles/snake.scss"
+import "./styles/food.scss"
+import "./styles/mobile-controls.scss"
+import "./styles/screens.scss"
+
 
 const getFoodLocation = () => {
 	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_PART_SIZE
@@ -150,7 +156,9 @@ const App = () => {
 
 	const gameIsOver = (reason: string) => {
 		console.log(`%cCause of ded snek: ${reason}`, "color: red; font-weight: bold;")
-		console.log(`Last SnakeHeadPosition: x=${snakeHeadPosition.x} / y=${snakeHeadPosition.y} / facing ${snakeHeadPosition.dir}`)
+		console.log(
+			`Last SnakeHeadPosition: x=${snakeHeadPosition.x} / y=${snakeHeadPosition.y} / facing ${snakeHeadPosition.dir}`
+		)
 		console.log("Snake Bodyparts (without head):")
 		console.log(SNAKE_POSITION_HISTORY)
 		setGameOver(true)
@@ -281,7 +289,9 @@ const App = () => {
 			)}
 			{gameOver && <GameOver />}
 			{gameStart && <Score scoreRef={scoreBlocks} score={score} highScore={highScore} />}
-			{!gameOver && <Controls onClickHandler={handleMobileButtonClick} activeKey={activeKey} />}
+			{!gameOver && gameStart && (
+				<Controls onClickHandler={handleMobileButtonClick} activeKey={activeKey} />
+			)}
 		</div>
 	)
 }
