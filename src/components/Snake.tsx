@@ -27,7 +27,8 @@ const Snake = ({
 				top: snakePart === "head" ? snakeHeadPosition.y : snakeBodyPartPosition[index - 1]?.y,
 				left: snakePart === "head" ? snakeHeadPosition.x : snakeBodyPartPosition[index - 1]?.x,
 				width: `${snakePartSize}px`,
-				height: `${snakePartSize}px`
+				height: `${snakePartSize}px`,
+				backgroundColor: `hsl(${125 + index * 4}, 80%, 40%)`
 			}}
 		></div>
 	)

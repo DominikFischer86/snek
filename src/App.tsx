@@ -33,7 +33,6 @@ import "./styles/food.scss"
 import "./styles/mobile-controls.scss"
 import "./styles/screens.scss"
 
-
 const getFoodLocation = () => {
 	const setFoodX = Math.floor(Math.random() * RATIO_X) * SNAKE_PART_SIZE
 	const setFoodY = Math.floor(Math.random() * RATIO_Y) * SNAKE_PART_SIZE
@@ -45,6 +44,8 @@ const registerMovement = (handleEvent: (event: Event) => void, gameOver: boolean
 		? document.removeEventListener("keydown", handleEvent)
 		: document.addEventListener("keydown", handleEvent)
 }
+
+let timeOutId: number = 0
 
 const App = () => {
 	const [score, setScore] = useState(0)
@@ -248,7 +249,6 @@ const App = () => {
 	const handleMovement = useCallback((event: any) => {
 		const { key, repeat } = event
 		if (repeat || key === "Enter") return
-
 		moveSnake(key)
 	}, [])
 
