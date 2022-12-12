@@ -154,6 +154,7 @@ const App = () => {
 	}
 
 	const gameIsOver = (reason: string) => {
+		console.log("%cGAME IS OVER!", "color: orange; font-weight: bold;")
 		console.log(`%cCause of ded snek: ${reason}`, "color: red; font-weight: bold;")
 		console.log(
 			`Last SnakeHeadPosition: x=${snakeHeadPosition.x} / y=${snakeHeadPosition.y} / facing ${snakeHeadPosition.dir}`
@@ -250,7 +251,22 @@ const App = () => {
 		moveSnake(key)
 	}, [])
 
-	if (gameOver) document.removeEventListener("keydown", handleMovement)
+	const handleRestart = () => {
+		console.log("%cRESTART!", "color: green; font-weight: bold;")
+		SNAKE_POSITION_HISTORY.length = 0
+		setGameOver(false)
+		setScore(0)
+		setLevel(0)
+		setSnakeHeadPosition(INITIAL_SNAKEPOSITION)
+		setSnake(BASE_SNAKE)
+		setFood(FOOD_TYPES[0])
+		setActiveKey("")
+		setGameStart(false)
+		setFoodPosition({
+			x: getFoodLocation().x,
+			y: getFoodLocation().y
+		})
+	}
 
 	return (
 		<div className="App">
@@ -285,8 +301,8 @@ const App = () => {
 					</div>
 				</>
 			)}
-			{gameOver && <GameOver />}
 			{gameStart && <Score scoreRef={scoreBlocks} score={score} highScore={highScore} />}
+			{gameOver && gameStart && <GameOver handleRestart={handleRestart} />}
 			{!gameOver && gameStart && (
 				<Controls onClickHandler={handleMobileButtonClick} activeKey={activeKey} />
 			)}
