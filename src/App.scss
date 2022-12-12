@@ -40,8 +40,8 @@
 	}
 
 	&:after {
-		background: rgb(255, 240, 104, 0.2);
 		content: "";
+		background: rgb(255, 240, 104, 0.2);
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -57,7 +57,7 @@
 	display: flex;
 	justify-content: space-between;
 	width: 500px;
-	max-width: 80%;
+	max-width: 100%;
 	font-size: 30px;
 
 	@media screen and (max-width: 1027px) {
@@ -68,6 +68,7 @@
 
 	@media screen and (max-width: 767px) {
 		font-size: 24px;
+		max-width: 90%;
 	}
 }
 
