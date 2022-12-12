@@ -45,8 +45,6 @@ const registerMovement = (handleEvent: (event: Event) => void, gameOver: boolean
 		: document.addEventListener("keydown", handleEvent)
 }
 
-let timeOutId: number = 0
-
 const App = () => {
 	const [score, setScore] = useState(0)
 	const [level, setLevel] = useState(0)
