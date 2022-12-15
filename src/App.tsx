@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react"
+import React, { useState, useEffect, useCallback, useRef } from "react"
 
 import { SnakePositionPropTypes } from "./configs/interfaces"
 
@@ -39,7 +39,7 @@ const getFoodLocation = () => {
 	return { x: setFoodX, y: setFoodY }
 }
 
-const registerMovement = (handleEvent: (event: Event) => void, gameOver: boolean) => {
+const registerMovement = (handleEvent: (event: KeyboardEvent) => void, gameOver: boolean) => {
 	gameOver
 		? document.removeEventListener("keydown", handleEvent)
 		: document.addEventListener("keydown", handleEvent)
@@ -154,7 +154,6 @@ const App = () => {
 	}
 
 	const gameIsOver = (reason: string) => {
-		console.log("%cGAME IS OVER!", "color: orange; font-weight: bold;")
 		console.log(`%cCause of ded snek: ${reason}`, "color: red; font-weight: bold;")
 		console.log(
 			`Last SnakeHeadPosition: x=${snakeHeadPosition.x} / y=${snakeHeadPosition.y} / facing ${snakeHeadPosition.dir}`
@@ -180,16 +179,14 @@ const App = () => {
 
 		highscore === "highscore"
 			? Object.values(scoreBlocks.current.children).map(
-					(htmlPElement: any) => (htmlPElement.className = "bling")
+					htmlPElement => (htmlPElement.className = "bling")
 			  )
 			: (scoreBlocks.current.children[0].className = "bling")
 
 		setTimeout(() => {
 			if (!celebrationBlock.current || !scoreBlocks.current) return
 			celebrationBlock.current.className = "effect"
-			Object.values(scoreBlocks.current.children).map(
-				(htmlPElement: any) => (htmlPElement.className = "")
-			)
+			Object.values(scoreBlocks.current.children).map(htmlPElement => (htmlPElement.className = ""))
 		}, 500)
 	}
 
@@ -245,14 +242,13 @@ const App = () => {
 	)
 		gameIsOver("Selfnom")
 
-	const handleMovement = useCallback((event: any) => {
+	const handleMovement = useCallback((event: KeyboardEvent) => {
 		const { key, repeat } = event
 		if (repeat || key === "Enter") return
 		moveSnake(key)
 	}, [])
 
 	const handleRestart = () => {
-		console.log("%cRESTART!", "color: green; font-weight: bold;")
 		SNAKE_POSITION_HISTORY.length = 0
 		setGameOver(false)
 		setScore(0)
